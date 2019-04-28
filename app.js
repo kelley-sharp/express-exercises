@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const convertAndValidateNums = require('./helpers');
 
-app.get('/mean', function(req, res, next) {
+app.get('/mean', function(req, res) {
   if (!req.query.nums) {
     return res
       .status('400')
@@ -21,7 +21,13 @@ app.get('/mean', function(req, res, next) {
     return res.status('400').send(validNums.message);
   }
 
-  return res.send(validNums);
+  let sum = validNums.reduce((acc, cur) => {
+    return acc + cur;
+  }, 0);
+
+  let mean = sum / validNums.length;
+
+  return res.send(`The mean of ${validNums.join(', ')} is ${mean}`);
 });
 
 app.listen('3000', () => console.log('listening on port 3000'));

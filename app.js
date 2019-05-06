@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const convertAndValidateNums = require('./helpers');
+const { convertAndValidateNums, orderNumsArray } = require('./helpers');
 
 app.get('/mean', function(req, res) {
   if (!req.query.nums) {
@@ -28,6 +28,15 @@ app.get('/mean', function(req, res) {
   let mean = sum / validNums.length;
 
   return res.send(`The mean of ${validNums.join(', ')} is ${mean}`);
+});
+
+app.get('/median', function(req, res) {
+  //order numbers least to greatest
+  let numsArr = req.query.nums.split(',');
+
+  //if odd, return arr[(length/2) to the nearest round number.
+
+  //else take the average of arr[length/2] and arr[(length/2)-1];
 });
 
 app.listen('3000', () => console.log('listening on port 3000'));

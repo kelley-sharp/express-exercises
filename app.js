@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { convertAndValidateNums, orderNumsArray } = require('./helpers');
+const convertAndValidateNums = require('./helpers');
 
 app.get('/mean', function(req, res) {
   if (!req.query.nums) {
@@ -31,12 +31,30 @@ app.get('/mean', function(req, res) {
 });
 
 app.get('/median', function(req, res) {
+  if (!req.query.nums) {
+    return res
+      .status('400')
+      .send(
+        'must have a key of nums in your query string with comma separated numbers to find the median'
+      );
+  }
+
+  let nums = req.query.nums.split(',');
+
+  let validNums = convertAndValidateNums(nums);
+
   //order numbers least to greatest
-  let numsArr = req.query.nums.split(',');
+  let numsArr = validNums.sort((a, b) => b - a);
 
   //if odd, return arr[(length/2) to the nearest round number.
-
-  //else take the average of arr[length/2] and arr[(length/2)-1];
+  if (numsArr.length % 2 !== 0) {
+    return res.send(numsArr[numsArr.length / 2]);
+  } else {
+    //else take the average of arr[length/2] and arr[(length/2)-1];
+    return res.send(
+      numsArr[numsArr.length / 2 + numsArr[numsArr.length / 2 - 1]]
+    );
+  }
 });
 
 app.listen('3000', () => console.log('listening on port 3000'));
